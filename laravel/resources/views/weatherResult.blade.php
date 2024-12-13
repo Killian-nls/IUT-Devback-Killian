@@ -32,10 +32,10 @@
                 <div class="overflow-x-auto">
                     <div class="flex space-x-4 min-w-full">
                         @foreach ($data as $entry)
-                            <div class="flex-none w-48 bg-gray-700 p-4 rounded-lg shadow-md">
+                            <div class="flex-none w-48 bg-gray-100 p-4 rounded-lg shadow-md">
                                 <p class="text-sm"><strong>Date & Time:</strong> {{ \Carbon\Carbon::createFromTimestamp($entry['dt'])->format('Y-m-d H:i') }}</p>
                                 <p class="text-lg font-semibold mt-2"><strong>Temperature:</strong> {{ number_format($entry['main']['temp'] - 273.15, 2) }} °C</p>
-                                <p class="text-sm"><strong>Feels Like:</strong> {{ $entry['main']['feels_like'] - 273.15 }} °C</p>
+                                <p class="text-sm"><strong>Feels Like:</strong> {{ number_format($entry['main']['feels_like'] - 273.15, 2) }} °C</p>
                                 <p class="text-sm"><strong>Weather:</strong> {{ ucfirst($entry['weather'][0]['description']) }}</p>
                                 <div class="flex items-center justify-center bg-gray-700 p-2 rounded-full">
                                     <img src="http://openweathermap.org/img/wn/{{ $entry['weather'][0]['icon'] }}.png" alt="weather icon" class="w-12 h-12">
