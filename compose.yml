@@ -19,10 +19,11 @@ services:
     container_name: nginx
     restart: unless-stopped
     image: donovanbroquin/iut-laravel:nginx
+    user: "root:root"
     networks:
       - laravel
     ports:
-      - 80:80
+      - 1225:80
     volumes:
       - ./laravel:/var/www/app
     depends_on:
@@ -35,6 +36,7 @@ services:
     networks:
       - laravel
     ports:
+      - 1025:1025
       - 8025:8025
 
 networks:
