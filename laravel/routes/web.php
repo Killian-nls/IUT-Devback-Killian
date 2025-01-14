@@ -25,6 +25,7 @@ Route::delete('/weather/{id}', [WeatherController::class, 'deleteWeatherQuery'])
 Route::post('/weather/favorite/{id}', [WeatherController::class, 'addFavorite'])->name('weather.addFavorite');
 Route::delete('/weather/notification/{city}', [WeatherController::class, 'deleteMailNotification'])->name('weather.deleteMailNotification');
 Route::post('/weather/mailNotification/{city}', [WeatherController::class, 'addMailNotification'])->name('weather.addMailNotification');
+Route::post('/weather/{city}/exportCSV', [WeatherController::class, 'exportCSV'])->name('weather.exportCSV');
 require __DIR__.'/auth.php';
 
 //TODO - 

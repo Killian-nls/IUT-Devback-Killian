@@ -21,6 +21,13 @@
                 </button>
             </form>
         @endif
+        <form action="{{ route('weather.exportCSV', $city) }}" method="POST" class="ml-2">
+            @csrf
+            <button type="submit" class="text-green-500 hover:text-green-700">
+                <i class="fas fa-file-csv text-green-500 hover:text-green-500 hover:far"></i>
+                Export to CSV
+            </button>
+        </form>
     </x-slot>
 
     <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 py-6">

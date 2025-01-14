@@ -79,13 +79,12 @@ class WeatherController extends Controller
     public function getWeatherForNextWeek(string $city, Request $request) {
         $service = new WeatherService;
         $weatherData = $service->getNextWeekWeather($city);
-
+        
         WeatherQuery::firstOrCreate(
             ['user_id' => auth()->id(), 'city' => $city],
         );
 
         $this->shareWeatherQueries();
-        
         return view('weatherResult')->with(['data' => $weatherData['list'], 'city' => $city, 'lat' => $request->lat, 'long' => $request->long]);
     }
 
@@ -114,5 +113,40 @@ class WeatherController extends Controller
         $userMailEntry->addMailNotification($userId, $city);
         $this->shareUserMailNotifications();
         return redirect()->route('weather')->with('success', 'Mail notifications activated');
+    }
+
+    public function exportCSV($city) {
+        $service = new WeatherService;
+        $weatherData = $service->getNextWeekWeather($city);
+
+        $filename = "weather_{$city}.csv";
+        $handle = fopen($filename, 'w+');
+        fputcsv($handle, [
+            'Date', 'Temperature', 'Feels Like', 'Min Temp', 'Max Temp', 
+            'Pressure', 'Humidity', 'Weather', 'Description', 'Wind Speed', 
+            'Wind Degree', 'Clouds', 'Visibility'
+        ]);
+
+        foreach ($weatherData['list'] as $data) {
+            fputcsv($handle, [
+            $data['dt_txt'],
+            $data['main']['temp'] - 273.15 . '°C',
+            $data['main']['feels_like'] - 273.15 . '°C',
+            $data['main']['temp_min'] - 273.15 . '°C',
+            $data['main']['temp_max'] - 273.15 . '°C',
+            $data['main']['pressure'],
+            $data['main']['humidity'],
+            $data['weather'][0]['main'],
+            $data['weather'][0]['description'],
+            $data['wind']['speed'],
+            $data['wind']['deg'],
+            $data['clouds']['all'],
+            $data['visibility']
+            ]);
+        }
+
+        fclose($handle);
+
+        return response()->download($filename)->deleteFileAfterSend(true);
     }
 }

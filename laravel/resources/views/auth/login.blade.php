@@ -44,4 +44,9 @@
             </x-primary-button>
         </div>
     </form>
+    <a href="/register">
+        <x-primary-button href="/register" class="ms-3">
+            {{ __('Register') }}
+        </x-primary-button>
+    </a>
 </x-guest-layout>
