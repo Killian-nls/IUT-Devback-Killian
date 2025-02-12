@@ -79,10 +79,17 @@ class WeatherController extends Controller
     public function getWeatherForNextWeek(string $city, Request $request) {
         $service = new WeatherService;
         $weatherData = $service->getNextWeekWeather($city);
-        
-        WeatherQuery::firstOrCreate(
-            ['user_id' => auth()->id(), 'city' => $city],
-        );
+
+        $existingQuery = WeatherQuery::where('user_id', auth()->id())->where('city', $city)->first();
+        if ($existingQuery) {
+            $existingQuery->update(['weather_data' => $weatherData]);
+        } else {
+            WeatherQuery::create(['user_id' => auth()->id(), 'city' => $city, 'weather_data' => $weatherData]);
+        }
+
+        if ($existingQuery->weather_data !== $weatherData) {
+            $existingQuery->update(['weather_data' => $weatherData]);
+        }
 
         $this->shareWeatherQueries();
         return view('weatherResult')->with(['data' => $weatherData['list'], 'city' => $city, 'lat' => $request->lat, 'long' => $request->long]);
@@ -140,8 +147,7 @@ class WeatherController extends Controller
             $data['weather'][0]['description'],
             $data['wind']['speed'],
             $data['wind']['deg'],
-            $data['clouds']['all'],
-            $data['visibility']
+            $data['clouds']['all']
             ]);
         }
 
