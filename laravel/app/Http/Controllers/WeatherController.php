@@ -81,14 +81,13 @@ class WeatherController extends Controller
         $weatherData = $service->getNextWeekWeather($city);
 
         $existingQuery = WeatherQuery::where('user_id', auth()->id())->where('city', $city)->first();
-        if ($existingQuery) {
+        if ($existingQuery !== null) {
             $existingQuery->update(['weather_data' => $weatherData]);
+            if (!isset($existingQuery->weather_data) || $existingQuery->weather_data !== $weatherData) {
+                $existingQuery->update(['weather_data' => $weatherData]);
+            }
         } else {
             WeatherQuery::create(['user_id' => auth()->id(), 'city' => $city, 'weather_data' => $weatherData]);
-        }
-
-        if ($existingQuery->weather_data !== $weatherData) {
-            $existingQuery->update(['weather_data' => $weatherData]);
         }
 
         $this->shareWeatherQueries();
